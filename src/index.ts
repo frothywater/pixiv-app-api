@@ -1,51 +1,54 @@
-import { stringify } from 'querystring'
 import { createHash as cryptoCreateHash } from 'crypto'
+import { stringify } from 'querystring'
 import { parse as urlParse } from 'url'
 import axios, { AxiosRequestConfig } from 'axios'
-import decamelizeKeys from 'decamelize-keys'
 import camelcaseKeys from 'camelcase-keys'
+import decamelizeKeys from 'decamelize-keys'
 import {
-  Pixiv_Client,
-  Pixiv_User_Detail,
-  Pixiv_Illust_Search,
-  Pixiv_User_Search,
-  Pixiv_Illust_Detail,
-  Pixiv_Comment_Search,
-  Pixiv_Trend_Tags,
-  Pixiv_Novel_Search,
+  PixivAutoComplete,
+  PixivBookmarkDetail,
+  PixivBookmarkSearch,
+  PixivClient,
+  PixivCommentSearch,
+  PixivFetchOptions,
+  PixivIllustDetail,
+  PixivIllustSearch,
+  PixivMangaSearch,
+  PixivNovelSearch,
+  PixivParams,
+  PixivRequestData,
+  PixivTrendTags,
+  PixivUserDetail,
+  PixivUserSearch,
+  UgoiraMetaData,
+} from './PixivTypes'
+import {
   Pixiv_Auto_Complete,
   Pixiv_Bookmark_Detail,
   Pixiv_Bookmark_Search,
-  Ugoira_Meta_Data,
+  Pixiv_Client,
+  Pixiv_Comment_Search,
+  Pixiv_Illust_Detail,
+  Pixiv_Illust_Search,
   Pixiv_Manga_Search,
+  Pixiv_Novel_Search,
+  Pixiv_Trend_Tags,
+  Pixiv_User_Detail,
+  Pixiv_User_Search,
+  Ugoira_Meta_Data,
 } from './Pixiv_Types'
-import {
-  PixivClient,
-  PixivIllustSearch,
-  PixivRequestData,
-  PixivParams,
-  PixivFetchOptions,
-  PixivBookmarkDetail,
-  PixivBookmarkSearch,
-  PixivUserDetail,
-  PixivUserSearch,
-  PixivIllustDetail,
-  PixivCommentSearch,
-  PixivNovelSearch,
-  PixivAutoComplete,
-  UgoiraMetaData,
-  PixivMangaSearch,
-  PixivTrendTags,
-} from './PixivTypes'
+
+const defaultHeaders = {
+  'App-OS': 'ios',
+  'App-OS-Version': '13.2.0',
+  'App-Version': '7.7.5',
+  'User-Agent': 'PixivIOSApp/7.7.5 (iOS 13.2.0; iPhone XR)',
+}
 
 const baseURL = 'https://app-api.pixiv.net/'
 const instance = axios.create({
   baseURL,
-  headers: {
-    'App-OS': 'ios',
-    'App-OS-Version': '9.3.3',
-    'App-Version': '6.0.9',
-  },
+  headers: defaultHeaders,
 })
 
 const CLIENT_ID = 'MOBrBDS8blbauoSck0ZfDbtuzpyT'
@@ -123,6 +126,7 @@ export default class PixivApp<CamelcaseKeys extends boolean = true> {
       'X-Client-Hash': cryptoCreateHash('md5')
         .update(Buffer.from(`${local_time}${HASH_SECRET}`, 'utf8'))
         .digest('hex'),
+      ...defaultHeaders,
     }
 
     const data: PixivRequestData = {
